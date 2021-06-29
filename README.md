@@ -56,3 +56,25 @@ function test() {
 let user:[string, number] = ['hi', 123]
 user.push(20)
 ```
+
+### Interface 接口
+- 对对象的形状（shape）进行描述
+- Duck Typing（鸭子类型）
+
+```javascript
+// interface.ts
+interface Person {
+  readonly id: number; // 只读
+  name: string;
+  age: number;
+  like?: string; // 可选
+}
+
+let leslie:Person = {
+  id: 1,
+  name: 'leslie',
+  age: 18,
+}
+
+leslie.id = 2 // 报错
+```
