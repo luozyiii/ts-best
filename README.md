@@ -15,8 +15,9 @@ cnpm install -g typescript
 
 ### 简单入门
 
+test.ts
+
 ```javascript
-// test.ts
 // 运行ts命令, 同级目录生成test.js
 tsc src/test.ts
 // 查看test.js文件
@@ -27,6 +28,8 @@ ts-node src/test.ts
 ```
 
 ### 原始数据类型和 any
+
+basic-types.ts
 
 ```javascript
 // basic-types.ts
@@ -49,8 +52,9 @@ notSure.getName();
 
 ### 数组和元组
 
+array-and-tuple.ts
+
 ```javascript
-// array-and-tuple.ts
 // 数组
 let arrOfNumber: number[] = [1, 3, 5];
 arrOfNumber.push(90);
@@ -66,6 +70,8 @@ user.push(20);
 ```
 
 ### Interface 接口
+
+interface.ts
 
 - 对对象的形状（shape）进行描述
 - Duck Typing（鸭子类型）
@@ -90,6 +96,8 @@ leslie.id = 2 // 报错
 
 ### Function 函数
 
+function.ts
+
 ```javascript
 // ?: 可选（得放最后面）
 function add(x: number, y: number, z?: number): number {
@@ -112,6 +120,8 @@ let add3: ISum = add; // 等价于add2
 ```
 
 ### 类型推论、联合类型和类型断言
+
+type-inference-and-more.ts
 
 ```javascript
 // 类型推论 type inference
@@ -145,6 +155,8 @@ function getLength2(input: string | number): number {
 ```
 
 ### class 类
+
+class.ts、class.js
 
 - 类(Class)：定义了一切事物的抽象特点
 - 对象(Object)：类的实例
@@ -196,6 +208,8 @@ console.log(maomao.run());
 
 ### 类和接口
 
+class-interface.ts
+
 ```javascript
 interface Radio {
   switchRadio(trigger: boolean): void;
@@ -221,6 +235,8 @@ class Cellphone2 implements RadioWithBattery {
 ```
 
 ### 枚举（Enum）
+
+enums.ts
 
 ```javascript
 // 运行
@@ -262,6 +278,8 @@ if (value === Direction3.Up) {
 ```
 
 ### 泛型（Generics）
+
+generics.ts
 
 ```javascript
 // 泛型简单用法
@@ -323,4 +341,37 @@ let kp2: KeyPair<string, number> = { key: 'str', value: 2 };
 let arr4: number[] = [1, 2, 3];
 let arr5: Array<number> = [1, 2, 3];
 
+```
+
+### 别名、字面量和交叉类型
+
+type-alias.ts
+
+```javascript
+// 别名
+let sum: (x: number, y: number) => number;
+const result = sum(1, 2);
+
+type PlusType = (x: number, y: number) => number;
+let sum2: PlusType;
+const result2 = sum2(2, 3);
+
+type StrOrNumber = string | number;
+let result3: StrOrNumber = '123';
+result3 = 123;
+result3 = true; // 报错
+
+// 字面量
+const str: 'name' = 'name';
+const num: 1 = 1;
+type Directions = 'Up' | 'Down' | 'Left' | 'Right';
+let toWhere: Directions = 'Left';
+
+// 交叉类型
+interface IName {
+  name: string;
+}
+
+type IPerson = IName & { age: number };
+let person: IPerson = { name: '123', age: 18 };
 ```
