@@ -1,6 +1,26 @@
 # ts-best
 
-Typescript 最佳入门
+[Typescript](https://www.tslang.cn/docs/home.html) 最佳入门
+
+### 为什么要使用 Typescript？
+
+- 程序更容易理解-代码即全部注释
+  问题：函数或者方法输入输出的参数类型，外部条件等;
+  动态 语言的约束：需要手动调试等过程。
+
+- 效率更高
+  在不同的代码库和定义中进行跳转；
+  代码自动补全。
+
+- 更少的错误
+  编译期间能够发现大部分错误；杜绝一些比较常见的错误。
+
+- 非常好的包容性
+  完全兼容 JavaScript;
+  第三方库可以单独编写类型文件。
+
+- 缺点
+  增加学习成本；短期内增加开发成本。
 
 ### 使用 cnpm 全局安装 typescript
 
@@ -423,3 +443,5 @@ let leslie2: IPartial = { name: 'leslie2' };
 type IOmit = Omit<IPerson, 'name'>; // 忽略 name
 let leslie3: IOmit = { age: 18 };
 ```
+
+### [Github](https://github.com/luozyiii/ts-best)
