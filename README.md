@@ -375,3 +375,15 @@ interface IName {
 type IPerson = IName & { age: number };
 let person: IPerson = { name: '123', age: 18 };
 ```
+
+### 声明文件
+
+```javascript
+// declaration-files.ts
+declaration('#foo');
+
+// declaration.d.ts
+declare var declaration: (selector: string) => any;
+```
+
+[jquery 声明 npm 包](https://www.npmjs.com/package/@types/jquery)

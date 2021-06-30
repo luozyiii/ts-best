@@ -1,0 +1,23 @@
+{
+  "name": "ts-best",
+  "version": "1.0.0",
+  "description": "Typescript 最佳入门",
+  "main": ".prettierrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luozyiii/ts-best.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luozyiii/ts-best/issues"
+  },
+  "homepage": "https://github.com/luozyiii/ts-best#readme",
+  "devDependencies": {
+    "@types/jquery": "^3.5.5"
+  }
+}
