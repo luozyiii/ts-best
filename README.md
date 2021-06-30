@@ -190,3 +190,29 @@ console.log(maomao.run());
 - Private： 修饰的属性或方法是私有的
 - Protected：修饰的属性或方法是受保护的
 - Readonly: 属性只读
+
+### 类和接口
+
+```javascript
+interface Radio {
+  switchRadio(trigger: boolean): void;
+}
+interface Battery {
+  checkBatteryStatus(): void;
+}
+interface RadioWithBattery extends Radio {
+  checkBatteryStatus(): void;
+}
+
+class Car implements Radio {
+  switchRadio(trigger: boolean) {}
+}
+class Cellphone implements Radio, Battery {
+  switchRadio(trigger: boolean) {}
+  checkBatteryStatus() {}
+}
+class Cellphone2 implements RadioWithBattery {
+  switchRadio(trigger: boolean) {}
+  checkBatteryStatus() {}
+}
+```
