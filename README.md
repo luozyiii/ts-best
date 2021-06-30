@@ -21,6 +21,9 @@ cnpm install -g typescript
 tsc src/test.ts
 // 查看test.js文件
 cat src/test.js
+
+// 纯运行
+ts-node src/test.ts
 ```
 
 ### 原始数据类型和 any
@@ -215,4 +218,45 @@ class Cellphone2 implements RadioWithBattery {
   switchRadio(trigger: boolean) {}
   checkBatteryStatus() {}
 }
+```
+
+### 枚举（Enum）
+
+```javascript
+// 运行
+ts-node src/enums.ts
+
+// 数字枚举
+enum Direction {
+  Up,
+  Down,
+  Left,
+  Rihgt,
+}
+console.log(Direction.Up); // 0
+console.log(Direction[0]); // Up
+
+enum Direction2 {
+  Up = 'UP',
+  Down = 'DOWN',
+  Left = 'LEFT',
+  Right = 'RIGHT',
+}
+
+const value = 'UP';
+if (value === Direction2.Up) {
+  console.log('go up!');
+}
+
+// 常量枚举：可以提升性能
+const enum Direction3 {
+  Up = 'UP',
+  Down = 'DOWN',
+  Left = 'LEFT',
+  Right = 'RIGHT',
+}
+if (value === Direction3.Up) {
+  console.log('go up!');
+}
+
 ```
