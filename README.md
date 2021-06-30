@@ -84,3 +84,5 @@ let leslie:Person = {
 
 leslie.id = 2 // 报错
 ```
+
+### Function 函数
