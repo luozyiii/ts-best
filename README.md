@@ -140,3 +140,53 @@ function getLength2(input: string | number): number {
 }
 
 ```
+
+### class 类
+
+- 类(Class)：定义了一切事物的抽象特点
+- 对象(Object)：类的实例
+- 面向对象(OOP)：三大特性：封装、继承、多态
+
+```javascript
+// 封装
+class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+  run() {
+    return `${this.name} is running`;
+  }
+}
+const snake = new Animal('leslie');
+console.log(snake.run());
+
+// 继承
+class Dog extends Animal {
+  bark() {
+    return `${this.name} is barking`;
+  }
+}
+const dog = new Dog('dog');
+console.log(dog.bark());
+
+// 多态:重写了构造函数、run方法
+class Cat extends Animal {
+  static categories = ['mammal'];
+  constructor(name) {
+    super(name);
+    console.log(this.name);
+  }
+  run() {
+    return `Meow, ${super.run()}`;
+  }
+}
+const maomao = new Cat('maomao');
+console.log(maomao.run());
+```
+
+### Typescript 中的类
+
+- Public: 修饰的属性或方法是共有的
+- Private： 修饰的属性或方法是私有的
+- Protected：修饰的属性或方法是受保护的
+- Readonly: 属性只读
