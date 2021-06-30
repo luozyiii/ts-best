@@ -5,10 +5,10 @@ interface Person {
   like?: string; // 可选
 }
 
-let leslie:Person = {
+let leslie: Person = {
   id: 1,
   name: 'leslie',
   age: 18,
-}
+};
 
-leslie.id = 2 // 报错
+leslie.id = 2; // 报错

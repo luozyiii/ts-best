@@ -1,6 +1,6 @@
-const hello = (name:string) => {
-  return `hello ${name}`
-}
+const hello = (name: string) => {
+  return `hello ${name}`;
+};
 
-hello('leslie')
-hello(123)
+hello('leslie');
+hello(123);
