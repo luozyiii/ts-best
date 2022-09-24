@@ -278,3 +278,198 @@ s.add({ name: 'abc' });
 const ws: WeakSet<string[]> = new WeakSet();
 console.log(ws);
 ```
+
+# 十、any 和 unknown 的区别， never 是什么
+
+```ts
+// unknown 未知集，开始不知道类型，后面断言 自己确定类型
+const a: unknown = ajax.get('/api/user');
+const b = a as number; // 将 a 断言成 number
+
+// any 全集， 任意类型都可以，尽可能别用
+
+// never 空集： 用于类型推断
+type A = string | number | boolean;
+const a: A = 'hello' as any;
+
+if (typeof a === 'string') {
+  a.split('');
+} else if (typeof a === 'number') {
+  a.toFixed();
+} else if (typeof a === 'boolean') {
+  a.valueOf();
+} else {
+  // never
+  a.toString(); // 报错
+  console.log('mei le');
+}
+```
+
+# 十一、何时用 enum, 何时不用
+
+```ts
+// 基本用法
+enum A {
+  todo = 0, // 逗号分隔, 后面不赋值，自动加1
+  done,
+  archived,
+  deleted,
+}
+let status = 0;
+status = A.todo;
+status = A.done;
+console.log(status);
+
+export {};
+
+// 前端权限 例：文章的读写
+enum Permission {
+  None = 0, // 0000
+  Read = 1 << 0, // 0001
+  Write = 1 << 1, // 0010
+  Delete = 1 << 2, // 0100
+  Manage = Read | Write | Delete, // 0111
+}
+
+type User = {
+  permission: Permission;
+};
+
+const user: User = {
+  permission: 0b0010, // 写权限
+};
+
+if (canWrite(user.permission)) {
+  console.log('拥有写权限');
+}
+
+if (canManage(user.permission)) {
+  console.log('拥有管理权限');
+}
+
+function canWrite(p: Permission) {
+  // 若 a & b === b; 则 a 有 b 的所有
+  return (p & Permission.Write) === Permission.Write;
+}
+function canManage(p: Permission) {
+  return (p & Permission.Manage) === Permission.Manage;
+}
+```
+
+```ts
+// 不用的时候
+enum Fruit {
+  apple = 'apple',
+  banana = 'banana',
+}
+let f: Fruit = Fruit.apple;
+f = Fruit.banana;
+console.log(f);
+
+// 上下两种含义几乎一致，推荐下面用法
+
+type Fruit = 'apple' | 'banana';
+let f: Fruit = 'apple';
+f = 'banana';
+console.log(f);
+```
+
+结论： 当 number 时， 使用 enum； string 时，不使用 enum；other 时，也不使用 enum。
+
+# 十二、type 与 interface 区别
+
+### 什么时候用 type？几乎都可以用
+
+类型别名 type Alias： 给其他类型取个名字; type 并不是新建一个类型，只是别名
+
+```ts
+type Name = string;
+type FalseLike = 0 | '' | null | undefined | false;
+type Point = { x: number; y: number };
+type Points = Point[];
+type Line = [Point, Point];
+type Cricle = { conter: Point; radius: number };
+type Fn = (a: number, b: number) => number;
+// 带有属性的函数 的声明
+type FnWithProps = {
+  (a: number, b: number): number;
+  prop1: number;
+};
+const fn: FnWithProps = (x, y) => {
+  return x + y;
+};
+fn.prop1 = 1;
+```
+
+### 什么时候用 interface？
+
+声明接口，描述`对象`的属性
+
+```ts
+interface Data {
+  [k: string]: string;
+}
+interface Point {
+  x: number;
+  y: number;
+}
+interface X {
+  age: number;
+}
+// 数组带属性
+interface Points extends Array<Point>, X {
+  name: string;
+}
+// 等价于
+type Points2 = Array<Point> & {
+  name: string;
+} & X;
+
+interface Fn {
+  (x: number, y: number): number;
+}
+interface Date2 extends Date {}
+```
+
+### type 不可重新赋值， interface 自动合并
+
+```ts
+// file1.ts
+interface X {
+  name: string;
+}
+interface X {
+  age: number;
+}
+const x: X = {
+  name: 'hi',
+  age: 10,
+};
+```
+
+```ts
+// custom.d.ts
+// 拓展axios
+import { AxiosRequestConfig } from 'axios';
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    _autoLoading?: boolean;
+    _mock?: string;
+  }
+}
+
+// 拓展String
+declare global {
+  interface String {
+    padZero(length: string): void;
+  }
+}
+const s = 'hello';
+s.padZero('hi');
+```
+
+### type vs interface
+
+- 区别 1 :interface 只是`描述对象`，type 则描述所有数据
+- 区别 2: type 只是 `别名`，interface 则是类型声明
+- 区别 3: 对外 API 尽量用 interface， 方便拓展，对内尽量用 type，防止代码分散

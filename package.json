@@ -1,23 +1,22 @@
 {
-  "name": "ts-best",
-  "version": "1.0.0",
-  "description": "Typescript 最佳入门",
-  "main": ".prettierrc.js",
+  "name": "my-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/luozyiii/ts-best.git"
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/luozyiii/ts-best/issues"
-  },
-  "homepage": "https://github.com/luozyiii/ts-best#readme",
   "devDependencies": {
-    "@types/jquery": "^3.5.5"
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "@vitejs/plugin-react": "^2.1.0",
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0"
   }
 }

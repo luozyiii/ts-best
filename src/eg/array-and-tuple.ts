@@ -10,3 +10,5 @@ function test() {
 // 元组tuple
 let user: [string, number] = ['hi', 123];
 user.push(20);
+
+export {}
