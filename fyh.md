@@ -1,3 +1,5 @@
+# TS = JS + 类型系统
+
 # 一、类型擦除是什么？
 
 我们可以通过下面工具对 ts 语法擦除；esbuild 和 swc 擦除速度快，是因为不检查 ts 语法。
@@ -473,3 +475,238 @@ s.padZero('hi');
 - 区别 1 :interface 只是`描述对象`，type 则描述所有数据
 - 区别 2: type 只是 `别名`，interface 则是类型声明
 - 区别 3: 对外 API 尽量用 interface， 方便拓展，对内尽量用 type，防止代码分散
+
+# 十三、纠错 - void
+
+有时松，有时紧
+
+```ts
+type Fn = () => void;
+
+const fn: Fn = () => {
+  return 'xx'; // 不报错
+};
+
+const a = fn();
+console.log((a as any).toString());
+
+function f(a: number): void {
+  return 123; // 报错
+}
+
+const f2 = function (): void {
+  return 1; // 报错
+};
+```
+
+# 十四、联合类型 => 类型收窄
+
+`JS` 可以对`值`进行加减运算，如果把 TS 的类型系统当作一门语言；`TS`可以对`类型`进行各种`运算`。
+
+### 联合类型（并集）
+
+```ts
+type A1 = number;
+type B1 = string;
+type C1 = A1 | B1;
+const c1: C1 = 40;
+
+type A2 = { name: string };
+type B2 = { age: number };
+type C2 = A2 | B2;
+const c2: C2 = {
+  name: 'leslie',
+  age: 18,
+};
+
+// 提示：
+// type A2 = {name: string}
+// 表示name为string的所有对象
+// 但不要错误地以为这些对象只有name 一个key;
+// 比如对象 {name: 'hi', age: 18}也是A 类型的；
+// 即A类型的对象可以有age，也可以没有age
+
+// 同理
+// type B2 = { age: number }
+// 表示 age为number的对象，
+// 这些对象的name 可以为空，也可以不为空
+```
+
+### 如何使用联合类型？ - 类型收窄
+
+```ts
+// 既不能把 a 当作number
+// 也不能把 a 当作string
+// 那么，怎么使用 a 变量呢
+// 答：想办法把类型区分开(类型收窄)
+const f1 = (a: number | string) => {
+  a.toFixed(); // 报错
+
+  // 使用 typeof 区分类型
+  if (typeof a === 'number') {
+    a.toFixed();
+  } else {
+    a.split(',');
+  }
+};
+```
+
+typeof 有局限性:用于简单类型 string, number, boolean...简单类型
+
+```ts
+// 使用 instanceof 区分类型
+const f1 = (a: Date | Date[]) => {
+  if (a instanceof Date) {
+    a.toISOString();
+  } else if (a instanceof Array) {
+    a[0].toISOString();
+  } else {
+    throw new Error('never no this');
+  }
+};
+// instanceof 的局限性
+// 1、不支持 string, number, boolean...简单类型
+// 2、不支持TS独有类型
+
+// 2、不支持TS独有类型
+type Person = {
+  name: string;
+};
+const fn1 = (a: Person | Person[]) => {
+  if (a instanceof Person) {
+    // 报错：“Person”仅表示类型，但在此处却作为值使用。
+  } else {
+    throw new Error('never no this');
+  }
+};
+
+// 使用in收窄类型， 只适用于部分对象
+type Person = {
+  name: string;
+};
+type Animal = {
+  x: string;
+};
+const fn1 = (a: Person | Animal) => {
+  if ('name' in a) {
+    a;
+  } else if ('x' in a) {
+    a;
+  } else {
+    a;
+  }
+};
+
+// 使用JS中判断类型的函数来区分
+const f1 = (a: string | string[]) => {
+  if (Array.isArray(a)) {
+    a.join('\n').toString();
+    // 此处 a 的类型 是 string[]
+  } else if (typeof a === 'string') {
+    parseFloat(a).toFixed(2);
+  } else {
+    throw new Error('never no this');
+  }
+};
+
+// 使用逻辑收窄类型
+const f1 = (a?: string[]) => {
+  if (a) {
+    a; // string[]
+  } else {
+    a; // undefined
+  }
+};
+const f2 = (a: string | number) => {
+  a = 1;
+  a; // number
+};
+const f3 = (x: string | number, y: string | boolean) => {
+  if (x === y) {
+    x; // string
+    y; // string
+  } else {
+    x; // string | number
+    y; // string | boolean
+  }
+};
+```
+
+以上所有的收窄都是通过 JavaScript 实现，众所周知、JS 类型系统很垃圾；有没有区分类型的万全之法
+
+### 类型谓词/类型判断 is
+
+```ts
+type Rect = {
+  height: number;
+  width: number;
+};
+type Circle = {
+  center: [number, number];
+  radius: number;
+};
+
+const f1 = (a: Rect | Circle) => {
+  if (isRect(a)) {
+    a; // Rect
+  } else if (isCircle(a)) {
+    a; // Circle
+  }
+};
+
+function isRect(x: Rect | Circle): x is Rect {
+  return 'width' in x && 'height' in x;
+}
+
+function isCircle(x: Rect | Circle): x is Circle {
+  return 'center' in x && 'radius' in x;
+}
+```
+
+### 如何使用联合类型？ 用 a.kind 区分 a 的类型
+
+```ts
+// 既不能把 a 当作number
+// 也不能把 a 当作string
+// 那么，怎么使用 a 变量呢
+// 答：想办法把类型区分开(类型收窄)
+const f1 = (a: number | string) => {};
+
+// 这代码看起来很傻，简单问题复杂化
+type A = { kind: 'string'; value: string };
+type B = { kind: 'number'; value: number };
+
+const f1 = (a: A | B) => {
+  if (a.kind === 'string') {
+    a;
+  } else {
+    a;
+  }
+};
+f1({ kind: 'string', value: 'hi' });
+
+// 再看另一个示例
+type Circle = { kind: 'Circle'; center: [number, number] };
+type Square = { kind: 'Square'; sideLength: number };
+type Shape = Circle | Square;
+const f1 = (a: string | number | Shape) => {
+  if (typeof a === 'string') {
+    a; // string;
+  } else if (typeof a === 'number') {
+    a; // string;
+  } else if (a.kind === 'Circle') {
+    a; // Circle
+  } else {
+    a; // Square
+  }
+};
+
+// 要求 T = A | B | C | D | ...
+// 1、A、B、C、D...有相同属性的kind或其它
+// 2、kind 类型是简单类型
+// 3、各类型的kind 可区分
+// 则称 T 为 可辨别联合
+// 一句话总结：同名、可辨别的 简单类型的 key
+```
+
+优点：让`复杂类型`的收窄变成`简单类型`的对比
