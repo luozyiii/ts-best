@@ -710,3 +710,209 @@ const f1 = (a: string | number | Shape) => {
 ```
 
 优点：让`复杂类型`的收窄变成`简单类型`的对比
+
+# 十五、法外狂徒 - any
+
+any = 所有类型（除了 never/unknow/any/void）的联合吗？为什么？（反证法）
+
+```ts
+const f1 = (a: number | string) => {
+  a.split(','); // 报错
+};
+const f2 = (a: any) => {
+  a.split(',');
+  a.join('');
+  a.toFixed(2);
+};
+```
+
+any = 法外狂徒，TS `绝大部分`规则对 any 不生效
+
+```ts
+const f2 = (a: any) => {
+  const b: never = a; // 报错
+};
+```
+
+# 十六、重新看待 unknown
+
+什么 = 所有类型（除了 never/unknow/any/void）的集合？为什么
+
+```ts
+// type any = noErrorType
+// unknown = 所有类型联合
+const f1 = (a: unknown) => {
+  if (typeof a === 'string') {
+    a.toString(); // string
+  } else if (a instanceof Date) {
+    a; // Date
+  }
+  if (typeof a === 'number') {
+    a; // number
+  }
+};
+```
+
+# 十七、交叉类型（交集）
+
+```ts
+type A = string & number;
+const a: A; // never
+
+type 有左手的人 = {
+  left: string;
+};
+type 有右手的人 = {
+  right: string;
+};
+
+// 声明的时候严格，再赋值会报错
+const a: 有左手的人 = {
+  left: '1m8',
+  right: 'ss', // 报错
+};
+
+const b = {
+  left: '1m8',
+  right: 'xx',
+};
+// 先初始化再赋值，没那么严格
+const c: 有左手的人 = b; // 这个时候不报错
+
+// 接口也有交集
+interface ColorFul {
+  color: string;
+}
+
+interface Circle {
+  radius: number;
+}
+
+type ColorFulCircle = ColorFul & Circle;
+
+// 交集模拟继承
+type Person = {
+  name: string;
+  age: number;
+};
+
+type User = Person & {
+  id: number;
+  email: string;
+};
+
+const u: User = {
+  name: 'aa',
+  age: 20,
+  id: 1,
+  email: 'aa@gmail.com',
+};
+
+export {};
+```
+
+### 交叉类型的特殊场景
+
+```ts
+// 属性冲突，未报错
+type Person = {
+  name: string;
+  age: number;
+  id: number;
+};
+
+type User = Person & {
+  id: string;
+  email: string;
+};
+
+const u: User = {
+  id: 1, // 报错
+  name: 'hi',
+  age: 18,
+  email: 'hi@hello.com',
+};
+
+const u2: User = {
+  name: 'hi2',
+  age: 18,
+  email: 'hi2@hello.com',
+}; // 也报错， 缺少 id
+
+// 欺骗自己: 断言
+const u3: User = {
+  name: 'hi2',
+  age: 18,
+  email: 'hi2@hello.com',
+  id: 1 as never,
+};
+
+export {};
+```
+
+```ts
+// 属性冲突，未报错
+type Person = {
+  name: string;
+  age: number;
+  id: 'A';
+};
+
+type User = Person & {
+  id: 'B';
+  email: string;
+};
+
+const u: User = {
+  id: 1,
+  name: 'hi',
+  age: 18,
+  email: 'hi@hello.com',
+}; // 报错，type User = never
+
+const u2: User = {
+  id: 1, // 报错
+  name: 'hi',
+  age: 18,
+  email: 'hi@hello.com',
+} as never;
+
+export {};
+```
+
+```ts
+// interface 属性冲突，报错
+interface Person {
+  name: string;
+  age: number;
+}
+
+interface User extends Person {
+  name: number;
+  age: string;
+}
+// 报错 接口“User”错误扩展接口“Person”。
+
+export type { User };
+```
+
+```ts
+// 函数的交集会得到并集
+type A = {
+  method: (a: number) => void;
+};
+
+type B = {
+  method: (s: string) => void;
+} & A;
+
+const b: B = {
+  method: (n) => {
+    console.log(n); // n is number or string
+  },
+};
+
+export {};
+```
+
+结论：交叉类型常用于有交集的类型 A、B；如果 A、B 无交集，可能得到 never、也可能只是属性 never.
